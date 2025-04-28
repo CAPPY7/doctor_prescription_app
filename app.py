@@ -278,28 +278,30 @@ def download_prescription():
 
 # ------------------- API Route to Send JSON -------------------
 @app.route('/api/prescriptions', methods=['GET'])
+@login_required
 def get_prescriptions():
     conn = get_db()
     c = conn.cursor()
-    c.execute('SELECT id, doctor_id, disease_id, medicines, heart_rate, blood_pressure, blood_sugar, hemoglobin, date, time FROM prescription')
+    c.execute('SELECT * FROM prescription')
     prescriptions = c.fetchall()
+    conn.close()
 
-    result = []
+    prescription_list = []
     for p in prescriptions:
-        result.append({
-            "id": p[0],
-            "doctor_id": p[1],
-            "disease_id": p[2],
-            "medicines": p[3],
-            "heart_rate": p[4],
-            "blood_pressure": p[5],
-            "blood_sugar": p[6],
-            "hemoglobin": p[7],
-            "date": p[8],
-            "time": p[9]
+        prescription_list.append({
+            'id': p[0],
+            'doctor_id': p[1],
+            'disease_id': p[2],
+            'medicines': p[3],
+            'heart_rate': p[4],
+            'blood_pressure': p[5],
+            'blood_sugar': p[6],
+            'hemoglobin': p[7],
+            'date': p[8],
+            'time': p[9]
         })
+    return jsonify(prescription_list)
 
-    return jsonify(result)
 # ---------------------------------------------------------------
 
 
