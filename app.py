@@ -1,7 +1,8 @@
-from flask import Flask, g, render_template, request, redirect, url_for, session, make_response
+from flask import Flask, g, render_template, request, redirect, url_for, session, make_response,jsonify
 import pdfkit
 import sqlite3
 import os
+
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps  # <-- added this
@@ -9,6 +10,9 @@ from functools import wraps  # <-- added this
 app = Flask(__name__)
 app.secret_key = '24d1bb8ecf43f7c687dbd4fff2890925'
 DATABASE = 'database.db'
+# Use the environment variable for the port (Render automatically sets this)
+port = int(os.environ.get("PORT", 5000))  # Default to 5000 if not set
+app.run(host='0.0.0.0', port=port)  # '0.0.0.0' makes it accessible from any IP
 
 def get_db():
     if 'db' not in g:
@@ -271,6 +275,34 @@ def download_prescription():
     response.headers['Content-Type'] = 'application/pdf'
     response.headers['Content-Disposition'] = 'attachment; filename=prescription.pdf'
     return response
+
+# ------------------- API Route to Send JSON -------------------
+@app.route('/api/prescriptions', methods=['GET'])
+def get_prescriptions():
+    conn = get_db()
+    c = conn.cursor()
+    c.execute('SELECT id, doctor_id, disease_id, medicines, heart_rate, blood_pressure, blood_sugar, hemoglobin, date, time FROM prescription')
+    prescriptions = c.fetchall()
+
+    result = []
+    for p in prescriptions:
+        result.append({
+            "id": p[0],
+            "doctor_id": p[1],
+            "disease_id": p[2],
+            "medicines": p[3],
+            "heart_rate": p[4],
+            "blood_pressure": p[5],
+            "blood_sugar": p[6],
+            "hemoglobin": p[7],
+            "date": p[8],
+            "time": p[9]
+        })
+
+    return jsonify(result)
+# ---------------------------------------------------------------
+
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))  # default to 5000 if no PORT env variable
