@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Final Prescription</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <h1>{{ clinic_name }}</h1>
+    <h2>Prescription</h2>
+    <p><strong>Doctor:</strong> {{ doctor_name }}</p>
+    <p><strong>Patient:</strong> {{ patient_name }} ({{ patient_age }} years)</p>
+    <p><strong>Date:</strong> {{ date }} &nbsp; <strong>Time:</strong> {{ time }}</p>
+
+    <h3>Vitals</h3>
+    <ul>
+        <li>Heart Rate: {{ heart_rate }}</li>
+        <li>Blood Pressure: {{ blood_pressure }}</li>
+        <li>Blood Sugar: {{ blood_sugar }}</li>
+        <li>Hemoglobin: {{ hemoglobin }}</li>
+        <li>Temperature: {{ temperature }}</li>
+        <li>Respiratory Rate: {{ respiratory_rate }}</li>
+        <li>Weight: {{ weight }}</li>
+        <li>Height: {{ height }}</li>
+    </ul>
+
+    <h3>Medicines</h3>
+    <ul>
+        {% for med in medicines %}
+            <li>{{ med }}</li>
+        {% endfor %}
+    </ul>
+
+    <h3>Instructions</h3>
+    <p>Take medicines as prescribed. Follow up if symptoms persist.</p>
+
+    <br>
+
+    <div>
+        <form method="post" action="{{ url_for('final_prescription') }}">
+            <input type="hidden" name="heart_rate" value="{{ heart_rate }}">
+            <input type="hidden" name="blood_pressure" value="{{ blood_pressure }}">
+            <input type="hidden" name="blood_sugar" value="{{ blood_sugar }}">
+            <input type="hidden" name="hemoglobin" value="{{ hemoglobin }}">
+            <input type="hidden" name="doctor_id" value="{{ doctor_id }}">
+            <input type="hidden" name="disease_id" value="{{ disease_id }}">
+            <input type="hidden" name="medicines" value="{{ medicines_str }}">
+            <button type="submit">Save Prescription</button>
+        </form>
+
+        <button onclick="window.print()">Print Prescription</button>
+
+        <a href="{{ url_for('download_prescription',
+                             doctor_id=doctor_id,
+                             disease_id=disease_id,
+                             medicines=medicines_str,
+                             heart_rate=heart_rate,
+                             blood_pressure=blood_pressure,
+                             blood_sugar=blood_sugar,
+                             hemoglobin=hemoglobin,
+                             temperature=temperature,
+                             respiratory_rate=respiratory_rate,
+                             weight=weight,
+                             height=height,
+                             patient_name=patient_name,
+                             patient_age=patient_age) }}">
+            <button>Download Prescription</button>
+        </a>
+    </div>
+
+    <hr>
+    <p style="text-align: center;">
+        City Health Clinic | Contact: +91-9876543210 | Email: contact@cityhealthclinic.com
+    </p>
+</body>
+</html>
