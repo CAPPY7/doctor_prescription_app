@@ -1,6 +1,7 @@
 from flask import Flask, g, render_template, request, redirect, url_for, session, make_response
 import pdfkit
 import sqlite3
+import os
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps  # <-- added this
@@ -271,5 +272,6 @@ def download_prescription():
     response.headers['Content-Disposition'] = 'attachment; filename=prescription.pdf'
     return response
 
-if __name__ == '__main__':
-    app.run(debug=True)
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))  # default to 5000 if no PORT env variable
+    app.run(host="0.0.0.0", port=port, debug=True)
